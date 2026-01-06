@@ -1,38 +1,33 @@
 import express from "express";
-import { Request, Response } from "express";
-
-type Middleware = (req: Request, res: Response, next: NextFunction) => void;
-type NextFunction = () => void;
+import { middlewareLogResponse, middlewareMetricsInc } from "./api/middleware.js";
+import { handlerReadiness } from "./api/readiness.js";
+import { handlerMetrics } from "./api/metrics.js";
+import { handlerReset } from "./api/reset.js";
 
 const app = express();
 const PORT = 8080;
 
-app.use("/app", express.static("./src/app"));
+//Sets global logging of all events
+app.use(middlewareLogResponse)
 
+// Increments hits for statis files served
+app.use("/app", middlewareMetricsInc, express.static("./src/app"));
+
+// Regular routes
 app.get("/healthz", handlerReadiness);
+app.get('/metrics', handlerMetrics);
+app.get('/reset', handlerReset);
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
 
-app.use(middlewareLogResponses)
 
-function handlerReadiness(req: Request, res: Response) {
 
-    const body = "OK"
 
-    res.set('Content-Type', 'text/plain; charset=utf-8');
-    res.send(body);
-}
 
-function middlewareLogResponses (req: Request, res: Response, next: NextFunction) {
-  res.on("finish", () => {
-  if (res.statusCode != 200) {
-    const method = req.method;
-    const url = req.url;
-    const status = res.statusCode;
-    console.log(`[NON-OK] ${method} ${url} - Status: ${status}`);
-  }
-});
-  next();
-}
+
+
