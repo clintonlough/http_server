@@ -29,3 +29,6 @@ Thumbs.db
 
 #Logging
 server.log
+
+#Credentials
+drizzle.config.ts
