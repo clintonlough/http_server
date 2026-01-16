@@ -19,7 +19,7 @@ export function middlewareLogResponse (req: Request, res: Response, next: NextFu
 }
 
 export function middlewareMetricsInc(req: Request, res: Response, next: NextFunction) {
-  config.fileServerHits += 1;
+  config.api.fileServerHits += 1;
   next();
 }
 

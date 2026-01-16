@@ -8,6 +8,20 @@
       "when": 1768253613178,
       "tag": "0000_round_luminals",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768512383664,
+      "tag": "0001_stale_ironclad",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768530078772,
+      "tag": "0002_strong_eternity",
+      "breakpoints": true
     }
   ]
 }
