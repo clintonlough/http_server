@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { makeJWT, validateJWT, hashPassword, checkPasswordHash, Payload } from "../auth.js";
+import type { Request } from "express";
+import { makeJWT, validateJWT, hashPassword, checkPasswordHash, Payload,getBearerToken } from "../auth.js";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -56,5 +57,24 @@ describe("JWT", () => {
     const token = makeJWT("12345", -1, secret);
     
         expect(() => validateJWT(token, secret)).toThrow();
+    });
+});
+
+//Successful GET Bearer Token
+describe("GET bearer token", () => {
+    
+    const mockRequest = {
+      headers: {
+        'authorization': 'Bearer mytoken123'
+      },
+      get: function(headerName: string) {
+        return this.headers[headerName.toLowerCase()];
+      }
+    } as Request;
+
+    it("should return bearer token", () => {
+    const token = getBearerToken(mockRequest);
+    
+        expect(token).toBe("mytoken123");
     });
 });

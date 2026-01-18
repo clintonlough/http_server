@@ -5,6 +5,7 @@ type APIConfig = {
   fileServerHits: number;
   dbURL: string;
   platform: string;
+  secret: string;
 };
 
 type DBConfig = {
@@ -26,6 +27,7 @@ export const config: Config = {
       fileServerHits: 0,
       dbURL: envOrThrow("DB_URL"),
       platform: envOrThrow("PLATFORM"),
+      secret: envOrThrow("SECRET"),
     },
     db: {
       url: envOrThrow("DB_URL"),

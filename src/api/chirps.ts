@@ -1,26 +1,31 @@
 import { Request, Response } from "express";
 import { LengthError } from "../error.js";
 import { createChirp, getAllChirps, getChirpById } from "../db/queries/chirps.js";
+import { getBearerToken, validateJWT } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerCreateChirp(req: Request, res: Response) {
-const chirpContent = req.body.body;
-const user = req.body.userId;
+  const chirpContent = req.body.body;
+  const token = getBearerToken(req);
+  const validUser = validateJWT(token,config.api.secret);
 
-  if (chirpContent.length > 140) {
-    throw new LengthError("Tweet too long");
-  } else {
-    const cleanedBody = filterProfanity(chirpContent);
-    //write chirp to the database
-    const result = await createChirp({body: cleanedBody, userId: user});
-    const resBody = {
-        body: result.body,
-        createdAt: result.createdAt,
-        id: result.id,
-        updatedAt: result.updatedAt,
-        userId: result.userId,
-    };
+  if (validUser) {
+    if (chirpContent.length > 140) {
+      throw new LengthError("Tweet too long");
+    } else {
+      const cleanedBody = filterProfanity(chirpContent);
+      //write chirp to the database
+      const result = await createChirp({body: cleanedBody, userId: validUser});
+      const resBody = {
+          body: result.body,
+          createdAt: result.createdAt,
+          id: result.id,
+          updatedAt: result.updatedAt,
+          userId: result.userId,
+      };
 
-    res.status(201).send(resBody);
+      res.status(201).send(resBody);
+    }
   }
 }
 

@@ -1,4 +1,6 @@
 import * as argon2 from "argon2";
+import express from "express";
+import type { Request } from "express";
 import { PermissionError } from "./error.js";
 import jwt, {JwtPayload} from "jsonwebtoken";
 
@@ -52,5 +54,15 @@ export function validateJWT(tokenString: string, secret: string): string {
         return String(userID);
     } catch (err) {
         throw new PermissionError("Invalid Token");
+    }
+}
+
+export function getBearerToken(req: Request): string {
+    try {
+        const header = String(req.get("Authorization"));
+        const stripped = header.replace(/^Bearer /, "");
+        return stripped;
+    } catch (err) {
+        throw new PermissionError("Invalid Authorization");
     }
 }
