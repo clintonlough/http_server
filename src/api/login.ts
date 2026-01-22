@@ -3,6 +3,7 @@ import { getUserByEmail } from "../db/queries/users.js";
 import { hashPassword, checkPasswordHash, makeJWT,  } from "../auth.js";
 import { PermissionError } from "../error.js";
 import { config } from "../config.js";
+import { makeRefreshToken } from "../auth.js";
 
 export async function handlerLogin(req: Request, res: Response) {
 
@@ -17,12 +18,14 @@ export async function handlerLogin(req: Request, res: Response) {
         const verified = await checkPasswordHash(password, user.password);
         if (verified === true) {
             const token = makeJWT(user.id, expiresInSeconds,config.api.secret);
+            const refreshToken = await makeRefreshToken(user.id);
             const resBody = {
                 id: user.id,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
                 email: user.email,
                 token: token,
+                refreshToken: refreshToken
             };
             res.status(200).send(resBody);
         } else {

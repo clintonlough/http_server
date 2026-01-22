@@ -6,6 +6,8 @@ import { handlerReset } from "./api/reset.js";
 import { handlerCreateUser } from "./api/users.js";
 import { handlerCreateChirp, handlerGetAllChirps, handlerGetChirp } from "./api/chirps.js";
 import { handlerLogin } from "./api/login.js";
+import { handlerRefresh } from "./api/refresh.js";
+import { handlerRevoke } from "./api/revoke.js";
 import { MiddlewareErrorHandler } from "./api/middleware.js";
 
 const app = express();
@@ -59,6 +61,24 @@ app.post("/api/chirps", async (req, res, next) => {
 app.post("/api/login", async (req, res, next) => {
   try {
     await handlerLogin(req, res);
+  } catch (err) {
+    next(err); // Pass the error to Express
+  }
+});
+//checks refresh tokens
+app.post("/api/refresh", async (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    await handlerRefresh(String(authHeader), res) 
+  } catch (err) {
+    next(err); // Pass the error to Express
+  }
+});
+//revokes refresh token
+app.post("/api/revoke", async (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    await handlerRevoke(String(authHeader), res) 
   } catch (err) {
     next(err); // Pass the error to Express
   }

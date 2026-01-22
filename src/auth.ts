@@ -3,6 +3,8 @@ import express from "express";
 import type { Request } from "express";
 import { PermissionError } from "./error.js";
 import jwt, {JwtPayload} from "jsonwebtoken";
+import crypto from "crypto";
+import { createRefreshToken } from "./db/queries/refresh_tokens.js";
 
 //Password functions - may end up defunct?
 
@@ -34,7 +36,7 @@ export type Payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 export function makeJWT(userID: string, expiresIn: number, secret: string): string {
 
     const currentTime = Math.floor(Date.now() / 1000);
-    const expiry = currentTime + expiresIn;
+    const expiry = currentTime + expiresIn; //expiresIn in ms
 
     const payload: Payload = {
         iss: "chirpy",
@@ -65,4 +67,12 @@ export function getBearerToken(req: Request): string {
     } catch (err) {
         throw new PermissionError("Invalid Authorization");
     }
+}
+
+export async function makeRefreshToken(userID: string): Promise<string> {
+    const buf = crypto.randomBytes(32);
+    const token = buf.toString('hex');
+    const expiryDate = new Date(Date.now() + (60 * 24 * 60 * 60 * 1000));
+    const newToken = await createRefreshToken(userID, token, expiryDate);
+    return newToken.token;
 }
