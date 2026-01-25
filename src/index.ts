@@ -3,7 +3,7 @@ import { middlewareLogResponse, middlewareMetricsInc } from "./api/middleware.js
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
-import { handlerCreateUser } from "./api/users.js";
+import { handlerCreateUser, handlerUpdateCredentials } from "./api/users.js";
 import { handlerCreateChirp, handlerGetAllChirps, handlerGetChirp } from "./api/chirps.js";
 import { handlerLogin } from "./api/login.js";
 import { handlerRefresh } from "./api/refresh.js";
@@ -29,6 +29,14 @@ app.get("/api/healthz", handlerReadiness);
 app.post("/api/users", async (req, res, next) => {
   try {
     await handlerCreateUser(req, res);
+  } catch (err) {
+    next(err); // Pass the error to Express
+  }
+});
+//Update Email or Password for logged in user
+app.put("/api/users", async (req, res, next) => {
+  try {
+    await handlerUpdateCredentials(req, res);
   } catch (err) {
     next(err); // Pass the error to Express
   }
