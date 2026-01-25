@@ -76,3 +76,13 @@ export async function makeRefreshToken(userID: string): Promise<string> {
     const newToken = await createRefreshToken(userID, token, expiryDate);
     return newToken.token;
 }
+
+export function getAPIKey(req: Request): string {
+    try {
+        const header = String(req.get("Authorization"));
+        const stripped = header.replace(/^ApiKey /, "");
+        return stripped;
+    } catch (err) {
+        throw new PermissionError("Invalid Authorization");
+    }
+}

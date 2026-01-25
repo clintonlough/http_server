@@ -29,6 +29,13 @@
       "when": 1769114712901,
       "tag": "0003_silly_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1769380908439,
+      "tag": "0004_steep_whirlwind",
+      "breakpoints": true
     }
   ]
 }

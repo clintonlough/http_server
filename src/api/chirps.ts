@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { LengthError } from "../error.js";
-import { createChirp, getAllChirps, getChirpById } from "../db/queries/chirps.js";
+import { createChirp, getAllChirps, getChirpById, deleteChirp } from "../db/queries/chirps.js";
 import { getBearerToken, validateJWT } from "../auth.js";
 import { config } from "../config.js";
 
@@ -71,4 +71,24 @@ export async function handlerGetChirp(req: Request, res: Response) {
     } else {
         res.status(404).send("chirp not found");
     }
+};
+
+export async function handlerDeleteChirp(req: Request, res: Response) {
+
+  const chirpID = req.params.chirpID;
+  const chirp = await getChirpById(chirpID);
+
+  const token = getBearerToken(req);
+  const userID = validateJWT(token, config.api.secret);
+
+  if (chirp) {
+    if (userID === chirp.userId) {
+      await deleteChirp(chirpID);
+      return res.status(204).send("Chirp Deleted");
+    } else { 
+      return res.status(403).send("permission denied");
+    }
+  } else {
+    return res.status(404).send("Chirp not found");
+  }
 };

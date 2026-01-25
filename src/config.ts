@@ -6,6 +6,7 @@ type APIConfig = {
   dbURL: string;
   platform: string;
   secret: string;
+  polkaKey: string;
 };
 
 type DBConfig = {
@@ -28,6 +29,7 @@ export const config: Config = {
       dbURL: envOrThrow("DB_URL"),
       platform: envOrThrow("PLATFORM"),
       secret: envOrThrow("SECRET"),
+      polkaKey: envOrThrow("POLKA_KEY"),
     },
     db: {
       url: envOrThrow("DB_URL"),

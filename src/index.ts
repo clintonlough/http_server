@@ -3,8 +3,8 @@ import { middlewareLogResponse, middlewareMetricsInc } from "./api/middleware.js
 import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
-import { handlerCreateUser, handlerUpdateCredentials } from "./api/users.js";
-import { handlerCreateChirp, handlerGetAllChirps, handlerGetChirp } from "./api/chirps.js";
+import { handlerCreateUser, handlerUpdateCredentials, handlerUpdateMembership } from "./api/users.js";
+import { handlerCreateChirp, handlerGetAllChirps, handlerGetChirp, handlerDeleteChirp } from "./api/chirps.js";
 import { handlerLogin } from "./api/login.js";
 import { handlerRefresh } from "./api/refresh.js";
 import { handlerRevoke } from "./api/revoke.js";
@@ -41,6 +41,14 @@ app.put("/api/users", async (req, res, next) => {
     next(err); // Pass the error to Express
   }
 });
+//Upgrade to chirpy_red
+app.post("/api/polka/webhooks", async (req, res, next) => {
+  try {
+    await handlerUpdateMembership(req, res);
+  } catch (err) {
+    next(err); // Pass the error to Express
+  }
+});
 //Get all Chirps
 app.get("/api/chirps", async (req, res, next) => {
   try {
@@ -49,10 +57,18 @@ app.get("/api/chirps", async (req, res, next) => {
     next(err); // Pass the error to Express
   }
 });
-//get a specific chirp by id
+//get a specific chirp by ID
 app.get("/api/chirps/:chirpID", async (req, res, next) => {
   try {
     await handlerGetChirp(req, res);
+  } catch (err) {
+    next(err); // Pass the error to Express
+  }
+});
+//Delete a specific chirp by ID
+app.delete("/api/chirps/:chirpID", async (req, res, next) => {
+  try {
+    await handlerDeleteChirp(req, res);
   } catch (err) {
     next(err); // Pass the error to Express
   }

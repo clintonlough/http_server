@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import type { Request } from "express";
-import { makeJWT, validateJWT, hashPassword, checkPasswordHash, Payload,getBearerToken } from "../auth.js";
+import { makeJWT, validateJWT, hashPassword, checkPasswordHash, Payload,getBearerToken, getAPIKey } from "../auth.js";
 
 describe("Password Hashing", () => {
   const password1 = "correctPassword123!";
@@ -76,5 +76,24 @@ describe("GET bearer token", () => {
     const token = getBearerToken(mockRequest);
     
         expect(token).toBe("mytoken123");
+    });
+});
+
+//Successful GET API Key
+describe("GET API Key", () => {
+    
+    const mockRequest = {
+      headers: {
+        'authorization': 'ApiKey apikey123'
+      },
+      get: function(headerName: string) {
+        return this.headers[headerName.toLowerCase()];
+      }
+    } as Request;
+
+    it("should return api key", () => {
+    const token = getAPIKey(mockRequest);
+    
+        expect(token).toBe("apikey123");
     });
 });
