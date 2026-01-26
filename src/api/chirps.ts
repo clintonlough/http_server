@@ -42,17 +42,51 @@ function filterProfanity(body: string) {
 }
 
 export async function handlerGetAllChirps(req: Request, res: Response) {
+  //Check for optional author id query parameter
+    let authorId = "";
+    let sort = "asc";
+    let authorIdQuery = req.query.authorId;
+    let sortQuery = req.query.sort;
+    if (typeof authorIdQuery === "string") {
+      authorId = authorIdQuery;
+    }
+    if (typeof sortQuery === "string") {
+      sort = sortQuery;
+    }
+
     const allChirps = await getAllChirps();
     let chirpList = [];
-    for (const chirp of allChirps) {
-        chirpList.push({
-        body: chirp.body,
-        createdAt: chirp.createdAt,
-        id: chirp.id,
-        updatedAt: chirp.updatedAt,
-        userId: chirp.userId,
-    });
+    if (authorId) {
+      for (const chirp of allChirps) {
+        if (chirp.userId === authorId) {
+          chirpList.push({
+          body: chirp.body,
+          createdAt: chirp.createdAt,
+          id: chirp.id,
+          updatedAt: chirp.updatedAt,
+          userId: chirp.userId,
+          });
+        }
+      }
+    } else {
+      for (const chirp of allChirps) {
+          chirpList.push({
+          body: chirp.body,
+          createdAt: chirp.createdAt,
+          id: chirp.id,
+          updatedAt: chirp.updatedAt,
+          userId: chirp.userId,
+          });
+      }
     }
+    //sort chirpList
+    if (sort === "desc") {
+      chirpList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    } else {
+      chirpList.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    }
+
+    //return result
     res.status(200).send(chirpList);
 };
 
