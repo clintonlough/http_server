@@ -28,24 +28,53 @@ POLKA_KEY = "API key used for polka webhooks to authenticate membership upgrades
 ## API Endpoints
 
 ### API Endpoints
-#### "/api/healthz"
+#### GET "/api/healthz"
 Accepts GET requests and provides the current server status
-##### Request Structure
-
 ___
-#### "/api/users"
+#### POST "/api/users"
 Accepts POST requests and creates a new user account.
 ##### Request Structure
-
+```json
+{
+    "email": "example@test.com",
+    "isChirpyRed": false
+}
+```
 ##### Response Structure
-
+```json
+{
+    "id": "123451235123",
+    "createdAt": "2024-01-28T07:38:00.000Z",
+    "updatedAt": "2024-01-28T07:38:00.000Z",
+    "email": "example@test.com",
+    "isChirpyRed": false
+}
+```
 ___
 #### "/api/users"
 Accepts PUT Requests and updates a users email or password for the current logged in user
 ##### Request Structure
+###### Headers
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+###### Request Body
+```json
+{
+  "email": "example@test.com",
+  "password": "thisismysuperstrongpassword"
+}
 
+```
 ##### Response Structure
-
+```json
+{
+    "id": "123451235123",
+    "createdAt": "2024-01-28T07:38:00.000Z",
+    "updatedAt": "2024-01-28T07:38:00.000Z",
+    "email": "example@test.com",
+    "isChirpyRed": false
+}
+```
 ___
 
 #### "/api/polka/webhooks"
